@@ -1,0 +1,13 @@
+{
+  "autorun": false,
+  "terminals": [
+    {
+      "name": "App",
+      "icon": "file",
+      "description": "This is a description",
+      "focus": true,
+      "onlySingle": false,
+      "command": ""
+    }
+  ]
+}

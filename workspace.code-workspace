@@ -1,0 +1,45 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"solidity.packageDefaultDependenciesDirectory": "node_modules/@scaffold-eth/hardhat/node_modules/",
+		"restoreTerminals.artificialDelayMilliseconds": 300,
+		"restoreTerminals.terminals": [
+			{
+				"splitTerminals": [
+					{
+						"name": "App",
+						"commands": []
+					}
+				]
+			},
+			{
+				"splitTerminals": [
+					{
+						"name": "PuraCrypto",
+						"commands": []
+					}
+				]
+			},
+			{
+				"splitTerminals": [
+					{
+						"name": "Chain",
+						"commands": []
+					}
+				]
+			},
+			{
+				"splitTerminals": [
+					{
+						"name": "Deploy",
+						"commands": []
+					}
+				]
+			}
+		]
+	}
+}

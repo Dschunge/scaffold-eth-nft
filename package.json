@@ -21,6 +21,8 @@
     "node": "yarn workspace @scaffold-eth/hardhat chain",
     "test": "yarn workspace @scaffold-eth/hardhat test",
     "start": "yarn workspace @scaffold-eth/react-app start",
+    "start1": "yarn workspace @scaffold-eth/pura-crypto develop",
+    "start2": "yarn workspace @scaffold-eth/puracrypto start",
     "compile": "yarn workspace @scaffold-eth/hardhat compile",
     "deploy": "yarn workspace @scaffold-eth/hardhat deploy",
     "watch": "yarn workspace @scaffold-eth/hardhat watch",
