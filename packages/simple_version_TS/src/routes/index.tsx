@@ -42,10 +42,11 @@ export default function Router() {
       path: 'dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/one" replace /> },
-        { path: 'one', element: <PageOne /> },
-        { path: 'two', element: <PageTwo /> },
-        { path: 'three', element: <PageThree /> },
+        { element: <Navigate to="/dashboard/wallet" replace /> },
+        { path: 'wallet', element: <PageWallet /> },
+        { path: 'profile', element: <PageProfile /> },
+        { path: 'nfts', element: <PageNFTs /> },
+        { path: 'pdf', element: <PagePDF /> },
         {
           path: 'app',
           children: [
@@ -79,9 +80,10 @@ export default function Router() {
 // IMPORT COMPONENTS
 
 // Dashboard
-const PageOne = Loadable(lazy(() => import('../pages/PageOne')));
-const PageTwo = Loadable(lazy(() => import('../pages/PageTwo')));
-const PageThree = Loadable(lazy(() => import('../pages/PageThree')));
+const PageWallet = Loadable(lazy(() => import('../pages/PageWallet')));
+const PageProfile = Loadable(lazy(() => import('../pages/PageProfile')));
+const PageNFTs = Loadable(lazy(() => import('../pages/PageNFTs')));
+const PagePDF = Loadable(lazy(() => import('../pages/PagePDF')));
 const PageFour = Loadable(lazy(() => import('../pages/PageFour')));
 const PageFive = Loadable(lazy(() => import('../pages/PageFive')));
 const PageSix = Loadable(lazy(() => import('../pages/PageSix')));

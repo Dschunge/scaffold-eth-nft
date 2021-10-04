@@ -22,10 +22,10 @@ const sidebarConfig = [
   {
     subheader: 'general',
     items: [
-      { title: 'Wallet', path: PATH_DASHBOARD.general.pageThree, icon: ICONS.analytics },
-      { title: 'One', path: PATH_DASHBOARD.general.pageOne, icon: ICONS.dashboard },
-      { title: 'Two', path: PATH_DASHBOARD.general.pageTwo, icon: ICONS.ecommerce },
-      { title: 'Three', path: PATH_DASHBOARD.general.pageThree, icon: ICONS.analytics }
+      { title: 'Wallet', path: PATH_DASHBOARD.general.pageWallet, icon: ICONS.analytics },
+      { title: 'Profile', path: PATH_DASHBOARD.general.pageProfile, icon: ICONS.dashboard },
+      { title: 'NFTs', path: PATH_DASHBOARD.general.pageNFTs, icon: ICONS.ecommerce },
+      { title: 'PDF', path: PATH_DASHBOARD.general.pagePDF, icon: ICONS.ecommerce }
     ]
   },
 
