@@ -68,6 +68,9 @@
     ]
   },
   "dependencies": {
-    "react-copy-to-clipboard": "^5.0.4"
+    "qrcode.react": "^1.0.1",
+    "react-blockies": "^1.4.1",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-identicons": "^1.2.5"
   }
 }

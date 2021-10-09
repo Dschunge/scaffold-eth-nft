@@ -44,6 +44,8 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/wallet" replace /> },
         { path: 'wallet', element: <PageWallet /> },
+        { path: 'buycrypto', element: <PageBuyCrypto /> },
+        { path: 'sendcrypto', element: <PageSellCrypto /> },
         { path: 'profile', element: <PageProfile /> },
         { path: 'nfts', element: <PageNFTs /> },
         { path: 'pdf', element: <PagePDF /> },
@@ -81,6 +83,8 @@ export default function Router() {
 
 // Dashboard
 const PageWallet = Loadable(lazy(() => import('../pages/PageWallet')));
+const PageBuyCrypto = Loadable(lazy(() => import('../pages/PageBuyCrypto')));
+const PageSellCrypto = Loadable(lazy(() => import('../pages/PageSendCryto')));
 const PageProfile = Loadable(lazy(() => import('../pages/PageProfile')));
 const PageNFTs = Loadable(lazy(() => import('../pages/PageNFTs')));
 const PagePDF = Loadable(lazy(() => import('../pages/PagePDF')));

@@ -14,7 +14,9 @@ export const PATH_DASHBOARD = {
     pageWallet: path(ROOTS_DASHBOARD, '/wallet'),
     pageProfile: path(ROOTS_DASHBOARD, '/profile'),
     pageNFTs: path(ROOTS_DASHBOARD, '/nfts'),
-    pagePDF: path(ROOTS_DASHBOARD, '/pdf')
+    pagePDF: path(ROOTS_DASHBOARD, '/pdf'),
+    pageBuyCrypto: path(ROOTS_DASHBOARD, '/buycrypto'),
+    pageSendCrypto: path(ROOTS_DASHBOARD, '/sendcrypto')
   },
   app: {
     root: path(ROOTS_DASHBOARD, '/app'),

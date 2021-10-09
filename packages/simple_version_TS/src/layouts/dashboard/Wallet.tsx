@@ -1,31 +1,49 @@
 import { useRef, useState, useEffect } from 'react';
 // material
 import { alpha } from '@mui/material/styles';
-import { Avatar, Button, Box, Divider, Typography, Grid, Stack } from '@mui/material';
+import { Avatar, Button, Box, Divider, Typography, Grid, Stack, Chip } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import SendIcon from '@mui/icons-material/Send';
+import AddIcon from '@mui/icons-material/Add';
 import LaunchIcon from '@mui/icons-material/Launch';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { purple } from '@mui/material/colors';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import Tooltip from '@mui/material/Tooltip';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 // components
 import MenuPopover from '../../components/MenuPopover';
 import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import { NETWORK, getErrorMessage, ConnectorNames, connectorsByName } from '../../web3-rect-utils/utils';
+import { NETWORK, NETWORKS, getErrorMessage, ConnectorNames, connectorsByName } from '../../web3-rect-utils/utils';
 import CustomizedSnackbar from '../../components/CustomizedSnackbar';
 import Account from '../../components/Account';
 import { useEagerConnect, useInactiveListener } from '../../web3-rect-utils/hooks';
+import Blockies from 'react-blockies';
 
-const Item = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'left',
-  color: theme.palette.text.secondary,
+import {
+  useGasPrice,
+} from "eth-hooks";
+
+const useStyles = makeStyles((theme: any) => ({
+  gasGauge: {
+    marginTop: theme.spacing(1),
+  },
+  blockNumber: {
+    marginRight: theme.spacing(0.5)
+  },
+  gasStationIcon: {
+    color: purple[500]
+  }
 }));
 
 export default function Wallet() {
+  const classes = useStyles();
   const context = useWeb3React<Web3Provider>()
   const { connector, library, chainId, account, activate, deactivate, active, error } = context
 
@@ -45,10 +63,15 @@ export default function Wallet() {
   const currentConnector = connectorsByName[ConnectorNames.Injected]
   const activating = currentConnector === activatingConnector
   const connected = currentConnector === connector
+  const address: string = account === undefined || account === null ? '' : account
 
   const anchorRef = useRef(null);
   const snackBarRef = useRef(null);
   const [open, setOpen] = useState(false);
+
+  const networkdata: any = chainId ? NETWORK(chainId) : null
+  const networkname: string = networkdata && networkdata.name ? networkdata.name : '';
+  const gasPrice = useGasPrice(NETWORKS.rinkeby, "fast");
 
   const handleOpen = () => {
     setOpen(true);
@@ -58,8 +81,8 @@ export default function Wallet() {
   };
 
   const GetAddress = () => {
-    const address: string = account === undefined || account === null ? '' : account
-    const displayAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+    //const address: string = account === undefined || account === null ? '' : account
+    const displayAddress = `${address.substring(0, 7)}...${address.substring(address.length - 7)}`
 
     function openOnEtherscanLink() {
       const networkdata: any = chainId ? NETWORK(chainId) : null
@@ -77,7 +100,7 @@ export default function Wallet() {
     return (
       <>
         <CustomizedSnackbar ref={snackBarRef} />
-        <Stack direction="row" spacing={0}>
+        <Stack direction="row" spacing={1}>
           <Typography sx={{ fontSize: '15px !important' }} variant="h6" component="h6" noWrap>
             {displayAddress}
           </Typography>
@@ -106,7 +129,7 @@ export default function Wallet() {
         <Typography variant="subtitle1" noWrap>
           Network
         </Typography>
-        <Stack direction="row" spacing={1}>
+        {/* <Stack direction="row" spacing={1}>
           <FiberManualRecordIcon sx={{ fontSize: '14px !important', color: '#00e676' }} />
           <Typography sx={{ fontSize: '12px !important' }} variant="subtitle1" noWrap>
             {networkname ? networkname.toUpperCase() : 'UNKNOWN'}
@@ -114,6 +137,41 @@ export default function Wallet() {
           <Typography sx={{ fontSize: '12px !important' }} variant="subtitle1" noWrap>
             Blocknumber: {BlockNumber()}
           </Typography>
+        </Stack> */}
+        <Stack direction="row" spacing={0}>
+          <div className={classes.gasGauge}>
+            <Chip
+              clickable
+              className={classes.blockNumber}
+              variant="outlined"
+              icon={<FiberManualRecordIcon sx={{ fontSize: '14px !important', color: '#00e676' }} />}
+              label={networkname ? networkname.toUpperCase() : 'UNKNOWN'}
+            />
+            <Chip
+              clickable
+              className={classes.blockNumber}
+              variant="outlined"
+              icon={<AccountTreeIcon />}
+              label={BlockNumber()}
+            />
+            <Chip
+              clickable
+              // className={classes.blockNumber}
+              variant="outlined"
+              onClick={() => {
+                window.open("https://ethgasstation.info/");
+              }}
+              // size="small"
+              deleteIcon={<LocalGasStationIcon />}
+              icon={<LocalGasStationIcon
+                sx={{
+                  color: `${purple[500]} !important`
+                }}
+              />}
+              // icon={<LocalGasStationIcon className={classes.gasStationIcon} />}
+              label={typeof gasPrice === "undefined" ? 0 : (parseInt(gasPrice.toString(), 10) / 10 ** 9) + ' Gwei'}
+            />
+          </div>
         </Stack>
       </>
     )
@@ -166,8 +224,7 @@ export default function Wallet() {
           open={open}
           onClose={handleClose}
           anchorEl={anchorRef.current}
-          //anchorEl={anchorEl}
-          sx={{ width: 300 }}
+          sx={{ width: 370 }}
         >
           <Box sx={{ my: 1.5, px: 2.5 }}>
             <Grid container spacing={2}>
@@ -189,18 +246,30 @@ export default function Wallet() {
           <Divider sx={{ my: 1 }} />
 
           <Box sx={{ my: 1.5, px: 2.5 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="/static/images/avatar/1.jpg"
-                  sx={{ width: 46, height: 46 }}
-                />
+            <Grid container spacing={0}>
+              <Grid item xs={3}>
+                <Avatar>
+                  <Blockies seed={address} size={10} scale={3} />
+                </Avatar>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={9}>
                 <GetAddress />
               </Grid>
             </Grid>
+          </Box>
+
+          <Divider sx={{ my: 1 }} />
+
+          <Box sx={{ p: 1, pt: 1.5 }}>
+            <Stack direction="row" spacing={1}>
+              <Button onClick={() => { setOpen(false) }} component={RouterLink} to="/dashboard/buycrypto" variant="contained" startIcon={<AddIcon />} >Buy Crypto</Button>
+              <Button onClick={() => { setOpen(false) }} component={RouterLink} to="/dashboard/sendcrypto" variant="contained" endIcon={<SendIcon />}>
+                Send
+              </Button>
+              <Button onClick={() => { setOpen(false) }} component={RouterLink} to="/dashboard/sendcrypto" variant="contained" endIcon={<QrCode2Icon />}>
+                Receive
+              </Button>
+            </Stack>
           </Box>
 
           <Divider sx={{ my: 1 }} />
