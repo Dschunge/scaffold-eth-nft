@@ -1,5 +1,4 @@
 import React, { useRef, Ref, forwardRef } from 'react'
-
 // Ethers Project
 import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers';
@@ -24,7 +23,8 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 // Customised Components
 import CustomizedSnackbar from '../components/CustomizedSnackbar'
-import { Spinner } from '../components/Spinner'
+import { Spinner } from '../components/Spinner';
+import AlertDialog from './AlertDialog';
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -42,7 +42,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
     ({ onClick, children, sx, ...other }, ref: Ref<any>) => {
         const { themeStretch } = useSettings();
         const context = useWeb3React<Web3Provider>()
-        const { connector, activate, error } = context
+        const { connector, activate, active, error } = context
 
         // handle logic to recognize the connector currently being activated
         const [activatingConnector, setActivatingConnector] = React.useState<any>()
@@ -61,7 +61,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
         const currentConnector = connectorsByName[ConnectorNames.Injected]
         const activating = currentConnector === activatingConnector
         const connected = currentConnector === connector
-        // const disabled = !triedEager || !!activatingConnector || connected || !!error
+        // const disabled = !triedEager || !!activatingConnector || connected || !!errorx
         console.log('currentConnector: ', currentConnector)
 
         const provider = new ethers.providers.StaticJsonRpcProvider(process.env.REACT_APP_RPC_URL_1)
@@ -168,10 +168,9 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                 <>
                     <Tooltip title={'Click to show amount in ' + title} placement="bottom">
                         <Chip sx={{
-                            color: (theme) => alpha(theme.palette.grey[900], 0.72),
-                            bgcolor: (theme) => alpha(theme.palette.grey[300], 0.72),
+                            // color: (theme) => alpha(theme.palette.text.secondary, 0.72),
+                            // bgcolor: (theme) => alpha(theme.palette.success.main, 1),
                             paddingRight: '17px',
-                            //bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72)
                         }}
                             label={displayBalance}
                             variant="outlined"
@@ -196,30 +195,6 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
             )
         }
 
-        const [openModal, setOpenModal] = React.useState(false);
-        function ErrorModal() {
-            return (
-                <Modal
-                    open={openModal}
-                    onClose={() => {
-                        setOpenModal(false);
-                    }}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={styleModal}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Text in a modal
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        </Typography>
-                    </Box>
-                </Modal>
-            )
-        }
-
-
         const handleEvent = (event: any) => {
             // Pass event to caller via the onChild2Event prop.
             // You can do something with the event, or just pass it.            
@@ -229,7 +204,15 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
         return (
             <>
                 <CustomizedSnackbar ref={snackBarRef} />
-                <ErrorModal />
+                {!!error && <AlertDialog
+                    defaultOpen={true}
+                    ref={snackBarRef}
+                    id='--------'
+                    title='Error'
+                    content={getErrorMessage(error)}
+                    onClose={() => {
+                        console.log('AlertDialog close');
+                    }} />}
                 <Container
                     sx={{
                         mx: { xs: 0, md: 0 },
@@ -238,15 +221,15 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                     maxWidth={themeStretch ? false : 'xl'}
                 >
                     <Stack direction="row" spacing={-3}>
-                        {/* {connected && (<ChainIdChip />)} */}
-                        {connected && (<BalanceChip />)}
-                        {connected && (
+                        {connected && !activating && account && (<BalanceChip />)}
+                        {connected && !activating && account && (
                             <Chip
+                                clickable
                                 ref={ref}
                                 {...other}
                                 sx={{
-                                    color: (theme) => alpha(theme.palette.grey[900], 0.72),
-                                    bgcolor: (theme) => alpha(theme.palette.grey[500], 0.72),
+                                    // color: (theme) => alpha(theme.palette.grey[900], 0.72),
+                                    // bgcolor: (theme) => alpha(theme.palette.grey[500], 0.72),
                                     paddingRight: '5px',
                                 }}
                                 label={displayAddress}
@@ -254,10 +237,9 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                                 avatar={<Avatar alt="Natacha" src="/static/MetaMask_Fox.svg" />}
                                 onDelete={() => {
                                     console.log('click icon')
-                                    //navigator.clipboard.writeText("address");
+                                    navigator.clipboard.writeText("address");
                                     // @ts-ignore
-                                    //snackBarRef.current.showSnackBar();
-                                    setOpenModal(true)
+                                    snackBarRef.current.showSnackBar();
                                 }}
                                 deleteIcon={
                                     <Tooltip title="Copy to clipboard" placement="bottom">
@@ -266,7 +248,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                                 }
                                 onClick={handleEvent}
                             />)}
-                        {!connected && !activating && (
+                        {((!active || error) &&
                             <Tooltip title="Click to connect to a wallet" placement="bottom">
                                 <Chip
                                     sx={{
@@ -283,12 +265,6 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                                     onClick={connectWallet} label="Connect Wallet" />
                             </Tooltip>
                         )}
-                        {/* {(active || error) && (
-                                <Chip onClick={() => {
-                                    deactivate()
-                                }} sx={{ marginLeft: '10px !important' }} label="Disconnect" color="primary" />
-                            )} */}
-                        {!!error && <Typography gutterBottom style={{ marginTop: '3rem', marginBottom: '0' }}>{getErrorMessage(error)}</Typography>}
                     </Stack>
                 </Container>
                 {activating && <SpinnerWithInfo />}
@@ -296,5 +272,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
         )
     }
 );
+
+
 
 export default Account
