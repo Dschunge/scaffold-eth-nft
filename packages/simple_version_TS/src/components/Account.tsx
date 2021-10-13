@@ -26,18 +26,6 @@ import CustomizedSnackbar from '../components/CustomizedSnackbar'
 import { Spinner } from '../components/Spinner';
 import AlertDialog from './AlertDialog';
 
-const styleModal = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
-
 const Account = forwardRef<HTMLButtonElement, ChipProps>(
     ({ onClick, children, sx, ...other }, ref: Ref<any>) => {
         const { themeStretch } = useSettings();
@@ -65,6 +53,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
         console.log('currentConnector: ', currentConnector)
 
         const provider = new ethers.providers.StaticJsonRpcProvider(process.env.REACT_APP_RPC_URL_1)
+        //console.log('provider: ', provider.getSigner())
         const price = useExchangeEthPrice(NETWORKS.rinkeby, provider);
         const snackBarRef = useRef(null);
 
@@ -150,7 +139,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
 
             if (usingBalance) {
                 const etherBalance = formatEther(usingBalance);
-                parseFloat(etherBalance).toFixed(2);
+                parseFloat(etherBalance).toPrecision(2);
                 floatBalance = parseFloat(etherBalance);
             }
 
@@ -237,7 +226,7 @@ const Account = forwardRef<HTMLButtonElement, ChipProps>(
                                 avatar={<Avatar alt="Natacha" src="/static/MetaMask_Fox.svg" />}
                                 onDelete={() => {
                                     console.log('click icon')
-                                    navigator.clipboard.writeText("address");
+                                    navigator.clipboard.writeText(address);
                                     // @ts-ignore
                                     snackBarRef.current.showSnackBar();
                                 }}
